@@ -43,6 +43,7 @@ Tick each box as you complete it. The workshop is **done** when all 10 are ticke
 ### Step 2 — Look at the app (no changes)
 
 Open `app/src/index.js`. Notice the three routes:
+
 - `GET /` → `{ ok: true }`
 - `GET /health` → 200 if it can reach Postgres, 503 otherwise (the Dockerfile HEALTHCHECK hits this)
 - `GET /tasks` → list from the `tasks` table, seeded by `app/db/init.sql`
@@ -54,9 +55,11 @@ You will **not** modify any file under `app/`.
 Open `.dockerignore` and complete `TODO(step-3)`. Required entries:
 
 **Verify (AC-03):**
+
 ```bash
 grep -E '^(node_modules|\.git|\.env)$' .dockerignore
 ```
+
 Should print three matching lines.
 
 ### Step 4 — Multi-stage Dockerfile
@@ -72,13 +75,15 @@ The key wiring: `web` `depends_on` `db` with `condition: service_healthy`, so th
 app doesn't try to connect before Postgres is ready.
 
 **Verify (AC-05, AC-06):**
+
 ```bash
 docker compose up -d
-docker compose ps                 
+docker compose ps
 docker compose config | grep -A1 depends_on
 ```
 
 Smoke test (also confirms AC-04 at runtime):
+
 ```bash
 docker inspect --format='{{.State.Health.Status}}' \
   $(docker compose ps -q web)            # should print: healthy
@@ -86,17 +91,27 @@ curl -fsS http://localhost:3000/health   # should print {"status":"ok"}
 curl -fsS http://localhost:3000/tasks    # should list the seed task
 ```
 
+PowerShell equivalent:
+
+```powershell
+docker inspect --format='{{.State.Health.Status}}' $(docker compose ps -q web)  # should print: healthy
+curl.exe -fsS http://localhost:3000/health                                       # should print {"status":"ok"}
+curl.exe -fsS http://localhost:3000/tasks                                        # should list the seed task
+```
+
 ### Step 6 — GitHub Actions CI
 
 Open `.github/workflows/ci.yml` and complete `TODO(step-6a)` through `TODO(step-6e)` (5 markers).
 Delete the `workflow_dispatch:` placeholder trigger after you add the real ones in step-6a.
 
-**Add secrets to your fork** *before* pushing:
+**Add secrets to your fork** _before_ pushing:
+
 - GitHub → your fork → **Settings → Secrets and variables → Actions → New repository secret**
 - Add `DOCKERHUB_USERNAME` (your Docker Hub username)
 - Add `DOCKERHUB_TOKEN` (the Personal Access Token from Prerequisites)
 
 **Verify (AC-07..AC-10):**
+
 ```bash
 git add .
 git commit -m "complete docker workshop"
@@ -164,5 +179,6 @@ docker rm -f peer-app peer-db
 docker network rm peer-test
 ```
 
+PowerShell note: use `curl.exe` (not `curl`) to pass `-fsS` flags.
 
-Good luck! 
+Good luck!
