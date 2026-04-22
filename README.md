@@ -155,7 +155,7 @@ docker pull <their-dockerhub-username>/workshop-app:latest
 # 2. Create an isolated network and start a temporary Postgres container
 docker network create peer-test
 
-docker run -d \
+docker run -d \ 
   --name peer-db \
   --network peer-test \
   -e POSTGRES_USER=postgres \
